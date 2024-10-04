@@ -25,10 +25,11 @@ model User {
   name      String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  task tasks[]
+  task Tasks[]
+  @@map("users")
 }
 
-model tasks {
+model Tasks {
   id        String   @id @default(uuid())
   title     String
   content   String
@@ -37,17 +38,17 @@ model tasks {
   updatedAt DateTime @updatedAt @map("updated_at")
   userId    String @map("user_id")
   user      User     @relation(fields: [userId], references: [id])
-  taskSubtask taskSubtask[] @relation("ParentTask")
-  subtasks taskSubtask[] @relation("Subtask")
+  taskSubtask TaskSubtask[] @relation("ParentTask")
+  subtasks TaskSubtask[] @relation("Subtask")
   @@map("tasks")
 }
 
 
-model taskSubtask {
+model TaskSubtask {
   parentTaskId String @map("parent_task_id")
   subtaskId     String @map("subtask_id")
-  task          tasks   @relation("ParentTask", fields: [parentTaskId], references: [id])
-  subtask       tasks   @relation("Subtask", fields: [subtaskId], references: [id])
+  task          Tasks   @relation("ParentTask", fields: [parentTaskId], references: [id])
+  subtask       Tasks   @relation("Subtask", fields: [subtaskId], references: [id])
   @@id([parentTaskId, subtaskId])
   @@map("task_subtask")
 }
