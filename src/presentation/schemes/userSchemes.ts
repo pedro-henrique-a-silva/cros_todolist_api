@@ -6,4 +6,9 @@ export const toCreateScheme = z.object({
   password: z.string().min(6),
 })
 
+export const toLoginScheme = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+})
+
 export default {}
