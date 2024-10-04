@@ -1,6 +1,7 @@
 import PrismaUserRepository from '../../infra/database/repository/PrismaUserRepository'
 import User from '../entities/User'
-import UserEmailAlreadyExists from '../exceptions/UserEmailAlreadyExists'
+import UserEmailAlreadyExistsException from '../exceptions/UserEmailAlreadyExistsException'
+import UserNotFoundExeption from '../exceptions/UserNotFoundExeption'
 import {
   UserAuthenticated,
   UserDomainInterface,
@@ -10,6 +11,8 @@ import {
 import UserRepository from '../repository/UserRepository'
 import { EncryptionDomain } from './EncryptionDomain'
 import { randomUUID } from 'node:crypto'
+import JWTDomain from './JwtDomain'
+import PasswordIncorrectException from '../exceptions/PasswordIncorrectException'
 
 export default class UserDomain implements UserDomainInterface {
   private userRepository: UserRepository = new PrismaUserRepository()
@@ -18,7 +21,7 @@ export default class UserDomain implements UserDomainInterface {
     const userExists = await this.userRepository.findUserByEmail(userData.email)
 
     if (userExists) {
-      throw new UserEmailAlreadyExists('User already exists')
+      throw new UserEmailAlreadyExistsException('User already exists')
     }
 
     const encryptionService = new EncryptionDomain()
@@ -39,7 +42,33 @@ export default class UserDomain implements UserDomainInterface {
     return userCreated
   }
 
-  login(user: UserForLoginDto): UserAuthenticated {
-    throw new Error('Method not implemented.')
+  async login(userData: UserForLoginDto): Promise<UserAuthenticated> {
+    const userExists = await this.userRepository.findUserByEmail(userData.email)
+
+    if (!userExists) {
+      throw new UserNotFoundExeption('User Not Found exists')
+    }
+
+    const encryptionService = new EncryptionDomain()
+
+    const passwordMatch = await encryptionService.comparePassword(
+      userData.password,
+      userExists.password,
+    )
+
+    if (!passwordMatch) {
+      throw new PasswordIncorrectException('Password Incorrect')
+    }
+
+    const token = JWTDomain.sign({
+      name: userExists.name,
+      email: userExists.email,
+    })
+
+    return {
+      name: userExists.name,
+      email: userExists.email,
+      jwt: token,
+    }
   }
 }
