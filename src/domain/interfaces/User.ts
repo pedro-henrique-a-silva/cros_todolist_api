@@ -19,11 +19,12 @@ export interface UserForLoginDto {
 }
 
 export interface UserAuthenticated {
+  name: string
   email: string
   jwt: string
 }
 
 export interface UserDomainInterface {
   createUser(userData: UserForCreateDto): Promise<User>
-  login(user: UserForLoginDto): UserAuthenticated
+  login(user: UserForLoginDto): Promise<UserAuthenticated>
 }
