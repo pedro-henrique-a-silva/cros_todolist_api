@@ -46,7 +46,7 @@ export default class UserDomain implements UserDomainInterface {
     const userExists = await this.userRepository.findUserByEmail(userData.email)
 
     if (!userExists) {
-      throw new UserNotFoundExeption('User Not Found exists')
+      throw new UserNotFoundExeption('User Not Found')
     }
 
     const encryptionService = new EncryptionDomain()
