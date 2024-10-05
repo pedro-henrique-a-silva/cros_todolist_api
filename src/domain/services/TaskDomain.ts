@@ -10,6 +10,7 @@ import {
 } from '../interfaces/Task'
 import UserRepository from '../repository/UserRepository'
 import TaskRepository from '../repository/TaskRepository'
+import SubTask from '../entities/SubTask'
 
 export default class TaskDomain implements TaskDomainInterface {
   private userRepository: UserRepository = new PrismaUserRepository()
@@ -72,5 +73,24 @@ export default class TaskDomain implements TaskDomainInterface {
     )
 
     return taskUpdated
+  }
+
+  async createSubTask(
+    taskData: TaskForCreateDto,
+    parentId: string,
+  ): Promise<Task> {
+    const userExists = await this.userExists(taskData.email)
+
+    const task = new SubTask(
+      randomUUID(),
+      taskData.title,
+      taskData.content,
+      userExists.id,
+      parentId,
+    )
+
+    const taskCreated = await this.taskRepository.createSubTask(task)
+
+    return taskCreated
   }
 }
