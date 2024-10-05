@@ -1,8 +1,6 @@
 import * as chai from 'chai'
 import { randomUUID } from 'node:crypto'
 import User from '../../../src/domain/entities/User'
-import chaiAsPromised from 'chai-as-promised'
-chai.use(chaiAsPromised)
 
 const { expect } = chai
 
