@@ -6,7 +6,7 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'REST API Docs',
+      title: 'Cros Todo List API',
       version: '1.0.0',
     },
     components: {
@@ -18,11 +18,6 @@ const options: swaggerJsdoc.Options = {
         },
       },
     },
-    // security: [
-    //   {
-    //     bearerAuth: [],
-    //   },
-    // ],
   },
   apis: ['./src/presentation/api/user.ts', './src/presentation/api/tasks.ts'],
 }
@@ -30,10 +25,8 @@ const options: swaggerJsdoc.Options = {
 const swaggerSpec = swaggerJsdoc(options)
 
 function swaggerDocs(app: Express, port: string | number) {
-  // Swagger page
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-  // Docs in JSON format
   app.get('/docs.json', (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/json')
     res.send(swaggerSpec)
