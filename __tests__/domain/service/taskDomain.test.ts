@@ -92,5 +92,68 @@ describe('Task Domain Test', () => {
     expect(tasks).to.have.lengthOf(3)
   })
 
+  it('Should be able to update a task succesfully', async () => {
+    const userId = randomUUID()
+    const taskId = randomUUID()
+
+    const user = {
+      name: 'Fulano',
+      email: 'fulano@email.com',
+      password: '123456',
+    }
+
+    sinon
+      .stub(PrismaUserRepository.prototype, 'findUserByEmail')
+      .resolves(new User(userId, user.name, user.email, user.password))
+
+    sinon
+      .stub(PrismaTaskRepository.prototype, 'updateTask')
+      .resolves(new Task(taskId, 'Task 1', 'content 1', userId))
+
+    const userService = new TaskDomain()
+
+    const tasks = await userService.updateTask(
+      taskId,
+      {
+        title: 'Task 1',
+        content: 'content 1',
+        status: 'DONE',
+      },
+      user.email,
+    )
+
+    expect(tasks).to.be.an.instanceOf(Task)
+    expect(tasks.id).to.equal(taskId)
+    expect(tasks.title).to.equal('Task 1')
+    expect(tasks.content).to.equal('content 1')
+    expect(tasks.userId).to.equal(userId)
+  })
+
+  it('Should not be able to update a Task with Nonexistent user', async () => {
+    const taskId = randomUUID()
+
+    const user = {
+      name: 'Fulano',
+      email: 'fulano@email.com',
+      password: '123456',
+    }
+
+    sinon.stub(PrismaUserRepository.prototype, 'findUserByEmail').resolves(null)
+
+    const userService = new TaskDomain()
+
+    await expect(
+      userService.updateTask(
+        taskId,
+        {
+          title: 'Task 1',
+          content: 'content 1',
+          status: 'DONE',
+        },
+        user.email,
+      ),
+    ).to.be.rejectedWith(UserNotFoundExeption)
+  })
+
   afterEach(sinon.restore)
 })
