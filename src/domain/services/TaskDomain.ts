@@ -62,4 +62,15 @@ export default class TaskDomain implements TaskDomainInterface {
 
     return taskUpdated
   }
+
+  async findAllSubtasks(id: string, userEmail: string): Promise<Task[]> {
+    const userExists = await this.userExists(userEmail)
+
+    const taskUpdated = await this.taskRepository.findAllSubtasks(
+      id,
+      userExists.id,
+    )
+
+    return taskUpdated
+  }
 }
