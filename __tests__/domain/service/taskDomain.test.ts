@@ -155,5 +155,37 @@ describe('Task Domain Test', () => {
     ).to.be.rejectedWith(UserNotFoundExeption)
   })
 
+  it('Should be able to return a list of Subtasks ', async () => {
+    const userId = randomUUID()
+    const taskId = randomUUID()
+
+    const user = {
+      name: 'Fulano',
+      email: 'fulano@email.com',
+      password: '123456',
+    }
+
+    const listOfTasks = [
+      new Task(taskId, 'task 1', 'content 1', userId),
+      new Task(taskId, 'task 1', 'content 1', userId),
+      new Task(taskId, 'task 1', 'content 1', userId),
+    ]
+
+    sinon
+      .stub(PrismaUserRepository.prototype, 'findUserByEmail')
+      .resolves(new User(userId, user.name, user.email, user.password))
+
+    sinon
+      .stub(PrismaTaskRepository.prototype, 'findAllSubtasks')
+      .resolves(listOfTasks)
+
+    const userService = new TaskDomain()
+
+    const tasks = await userService.findAllSubtasks(taskId, user.email)
+
+    expect(tasks).to.be.an('array')
+    expect(tasks).to.have.lengthOf(3)
+  })
+
   afterEach(sinon.restore)
 })
