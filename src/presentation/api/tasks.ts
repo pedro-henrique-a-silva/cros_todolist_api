@@ -309,4 +309,41 @@ taskRouter.post('/:id/subtasks', async (req: RequestWitJwt, res: Response) => {
   return res.status(201).json(createdTask)
 })
 
+/**
+ * @swagger
+ * /task/{id}:
+ *   delete:
+ *     tags: [Tarefas]
+ *     summary: Deleta uma task
+ *     description: Deleta uma task do banco de dados. A rota requer um token JWT válido.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: O ID da task a ser deletada
+ *     responses:
+ *       204:
+ *         description: Task deletada com sucesso.
+ *       400:
+ *         description: ID inválido (não segue o formato UUID).
+ *       401:
+ *         description: Token JWT inválido ou ausente.
+ */
+taskRouter.delete('/:id', async (req: RequestWitJwt, res: Response) => {
+  const idData = idParamScheme.safeParse(req.params)
+
+  if (!idData.success) {
+    throw new BadRequestException('Bad Request')
+  }
+
+  await taskDomain.deleteTask(idData.data.id, req.user!.email)
+
+  return res.status(204).send()
+})
+
 export default taskRouter

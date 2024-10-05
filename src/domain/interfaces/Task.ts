@@ -30,4 +30,5 @@ export interface TaskDomainInterface {
   ): Promise<Task>
   findAllSubtasks(id: string, userEmail: string): Promise<Task[]>
   createSubTask(taskData: TaskForCreateDto, parentId: string): Promise<Task>
+  deleteTask(id: string, userEmail: string): Promise<void>
 }

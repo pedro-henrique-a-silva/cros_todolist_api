@@ -6,4 +6,5 @@ export default interface TaskRepository {
   updateTask(task: Task): Promise<Task>
   findAllSubtasks(id: string, userId: string): Promise<Task[]>
   createSubTask(taskData: Task): Promise<Task>
+  deleteTask(id: string, userId: string): Promise<void>
 }

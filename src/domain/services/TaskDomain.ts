@@ -93,4 +93,10 @@ export default class TaskDomain implements TaskDomainInterface {
 
     return taskCreated
   }
+
+  async deleteTask(id: string, userEmail: string): Promise<void> {
+    const userExists = await this.userExists(userEmail)
+
+    await this.taskRepository.deleteTask(id, userExists.id)
+  }
 }
