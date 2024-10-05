@@ -187,5 +187,40 @@ describe('Task Domain Test', () => {
     expect(tasks).to.have.lengthOf(3)
   })
 
+  it('Should be able to create a new SubTask succesfully', async () => {
+    const userId = randomUUID()
+    const taskId = randomUUID()
+
+    const user = {
+      name: 'Fulano',
+      email: 'fulano@email.com',
+      password: '123456',
+    }
+
+    sinon
+      .stub(PrismaUserRepository.prototype, 'findUserByEmail')
+      .resolves(new User(userId, user.name, user.email, user.password))
+
+    sinon
+      .stub(PrismaTaskRepository.prototype, 'createSubTask')
+      .resolves(new Task(taskId, 'task 1', 'content 1', userId))
+
+    const userService = new TaskDomain()
+    const createdTask = await userService.createSubTask(
+      {
+        title: 'task 1',
+        content: 'content 1',
+        email: user.email,
+      },
+      taskId,
+    )
+
+    expect(createdTask).to.be.an.instanceOf(Task)
+    expect(createdTask.id).to.equal(taskId)
+    expect(createdTask.title).to.equal('task 1')
+    expect(createdTask.content).to.equal('content 1')
+    expect(createdTask.userId).to.equal(userId)
+  })
+
   afterEach(sinon.restore)
 })
