@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import Task from '../../../domain/entities/Task'
 import TaskRepository from '../../../domain/repository/TaskRepository'
+import SubTask from '../../../domain/entities/SubTask'
 
 export default class PrismaTaskRepository implements TaskRepository {
   private prisma: PrismaClient = new PrismaClient()
@@ -62,5 +63,19 @@ export default class PrismaTaskRepository implements TaskRepository {
     return tasks.map(
       (task) => new Task(task.id, task.title, task.content, task.userId),
     )
+  }
+
+  async createSubTask(taskData: SubTask): Promise<Task> {
+    const task = await this.prisma.tasks.create({
+      data: {
+        id: taskData.id,
+        title: taskData.title,
+        content: taskData.content,
+        userId: taskData.userId,
+        parentId: taskData.parentId,
+      },
+    })
+
+    return new Task(task.id, task.title, task.content, task.userId)
   }
 }
