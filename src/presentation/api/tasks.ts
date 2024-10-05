@@ -67,4 +67,23 @@ taskRouter.get('/:id/subtasks', async (req: RequestWitJwt, res: Response) => {
   return res.status(200).json(subtasks)
 })
 
+taskRouter.post('/:id/subtasks', async (req: RequestWitJwt, res: Response) => {
+  const taskData = toCreateTaskScheme.safeParse(req.body)
+  const idData = idParamScheme.safeParse(req.params)
+
+  if (!taskData.success || !idData.success) {
+    throw new BadRequestException('Bad Request')
+  }
+
+  const createdTask = await taskDomain.createSubTask(
+    {
+      ...taskData.data,
+      email: req.user!.email,
+    },
+    idData.data.id,
+  )
+
+  return res.status(201).json(createdTask)
+})
+
 export default taskRouter
