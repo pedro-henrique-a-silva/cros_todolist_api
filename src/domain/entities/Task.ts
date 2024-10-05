@@ -1,8 +1,9 @@
 export default class Task {
-  public readonly _id: string
-  public _title: string
-  public _content: string
-  public _userId: string
+  private readonly _id: string
+  private _title: string
+  private _content: string
+  private _userId: string
+  private _status: 'PENDING' | 'DONE' = 'PENDING'
 
   constructor(id: string, title: string, content: string, userId: string) {
     this._id = id
@@ -37,6 +38,14 @@ export default class Task {
 
   set userId(value: string) {
     this._userId = value
+  }
+
+  get status(): 'PENDING' | 'DONE' {
+    return this._status
+  }
+
+  set status(value: 'PENDING' | 'DONE') {
+    this._status = value
   }
 
   toJSON() {
