@@ -7,6 +7,12 @@ export interface TaskForCreateDto {
   email: string
 }
 
+export interface TaskForUpdateDto {
+  title: string
+  content: string
+  status: 'PENDING' | 'DONE'
+}
+
 export interface RequestWitJwt extends Request {
   user?: {
     name: string
@@ -17,4 +23,9 @@ export interface RequestWitJwt extends Request {
 export interface TaskDomainInterface {
   createTask(taskData: TaskForCreateDto): Promise<Task>
   findAllTasks(userEmail: string): Promise<Task[]>
+  updateTask(
+    id: string,
+    taskData: TaskForUpdateDto,
+    userEmail: string,
+  ): Promise<Task>
 }
