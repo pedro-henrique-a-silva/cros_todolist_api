@@ -38,4 +38,12 @@ export default class Task {
   set userId(value: string) {
     this._userId = value
   }
+
+  toJSON() {
+    return {
+      id: this._id,
+      title: this._title,
+      content: this._content,
+    }
+  }
 }
