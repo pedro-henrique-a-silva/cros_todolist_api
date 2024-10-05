@@ -52,4 +52,19 @@ taskRouter.put('/:id', async (req: RequestWitJwt, res: Response) => {
   return res.status(200).json(updatedTask)
 })
 
+taskRouter.get('/:id/subtasks', async (req: RequestWitJwt, res: Response) => {
+  const idData = idParamScheme.safeParse(req.params)
+
+  if (!idData.success) {
+    throw new BadRequestException('Bad Request')
+  }
+
+  const subtasks = await taskDomain.findAllSubtasks(
+    idData.data.id,
+    req.user!.email,
+  )
+
+  return res.status(200).json(subtasks)
+})
+
 export default taskRouter
