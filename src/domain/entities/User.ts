@@ -1,5 +1,3 @@
-import { UserInterface } from '../interfaces/User'
-
 export default class User {
   private _id: string
   private _name: string
@@ -45,12 +43,11 @@ export default class User {
     this._password = password
   }
 
-  toCreate(): UserInterface {
+  toJson() {
     return {
       id: this._id,
       name: this._name,
       email: this._email,
-      password: this._password,
     }
   }
 }
