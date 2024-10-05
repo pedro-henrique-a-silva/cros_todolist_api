@@ -15,7 +15,6 @@ datasource db {
 
 enum Status {
   PENDING
-  IN_PROGRESS
   DONE
 }
 
@@ -23,6 +22,7 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   name      String?
+  password  String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   task Tasks[]
@@ -34,21 +34,10 @@ model Tasks {
   title     String
   content   String
   status    Status  @default(PENDING)
+  parentId  String? @map("parent_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   userId    String @map("user_id")
   user      User     @relation(fields: [userId], references: [id])
-  taskSubtask TaskSubtask[] @relation("ParentTask")
-  subtasks TaskSubtask[] @relation("Subtask")
   @@map("tasks")
-}
-
-
-model TaskSubtask {
-  parentTaskId String @map("parent_task_id")
-  subtaskId     String @map("subtask_id")
-  task          Tasks   @relation("ParentTask", fields: [parentTaskId], references: [id])
-  subtask       Tasks   @relation("Subtask", fields: [subtaskId], references: [id])
-  @@id([parentTaskId, subtaskId])
-  @@map("task_subtask")
 }
