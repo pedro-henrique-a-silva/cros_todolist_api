@@ -3,6 +3,7 @@ import JWTDomain from '../../domain/services/JwtDomain'
 import BadRequestException from '../exceptions/BadRequestException'
 import { jwtScheme } from '../schemes/jwtScheme'
 import { RequestWitJwt } from '../../domain/interfaces/Task'
+import UnauthorizedException from '../exceptions/UnauthorizedException'
 
 export const jwtValidator = (
   req: RequestWitJwt,
@@ -12,7 +13,7 @@ export const jwtValidator = (
   const tokenData = jwtScheme.safeParse(req.headers)
 
   if (!tokenData.success) {
-    throw new BadRequestException('Token not provided')
+    throw new UnauthorizedException('Token not provided')
   }
 
   try {
