@@ -30,4 +30,24 @@ export default class PrismaTaskRepository implements TaskRepository {
       (task) => new Task(task.id, task.title, task.content, task.userId),
     )
   }
+
+  async updateTask(task: Task): Promise<Task> {
+    const taskUpdated = await this.prisma.tasks.update({
+      where: {
+        id: task.id,
+      },
+      data: {
+        title: task.title,
+        content: task.content,
+        status: task.status,
+      },
+    })
+
+    return new Task(
+      taskUpdated.id,
+      taskUpdated.title,
+      taskUpdated.content,
+      taskUpdated.userId,
+    )
+  }
 }
