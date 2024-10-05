@@ -50,4 +50,17 @@ export default class PrismaTaskRepository implements TaskRepository {
       taskUpdated.userId,
     )
   }
+
+  async findAllSubtasks(id: string, userId: string): Promise<Task[]> {
+    const tasks = await this.prisma.tasks.findMany({
+      where: {
+        userId,
+        parentId: id,
+      },
+    })
+
+    return tasks.map(
+      (task) => new Task(task.id, task.title, task.content, task.userId),
+    )
+  }
 }
