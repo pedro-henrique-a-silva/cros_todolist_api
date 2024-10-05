@@ -29,4 +29,5 @@ export interface TaskDomainInterface {
     userEmail: string,
   ): Promise<Task>
   findAllSubtasks(id: string, userEmail: string): Promise<Task[]>
+  createSubTask(taskData: TaskForCreateDto, parentId: string): Promise<Task>
 }
